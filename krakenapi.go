@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	//"reflect"
 )
 
 const (
@@ -112,13 +113,34 @@ func (api *KrakenApi) Time() (*TimeResponse, error) {
 }
 
 // Assets returns the servers available assets
-func (api *KrakenApi) Assets() (*AssetsResponse, error) {
-	resp, err := api.queryPublic("Assets", nil, &AssetsResponse{})
+func (api *KrakenApi) Assets() (map[string]interface{}, error) {
+	params := url.Values{}
+	params.Add("info", "info")
+	resp, err := api.queryPublic("Assets", params, nil)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
+	// return map instead of interface
+	var outputAsMap map[string]interface{} = resp.(map[string]interface{})
 
-	return resp.(*AssetsResponse), nil
+	//for key, value := range outputAsMap {
+	//	fmt.Println("-----------------------------------")
+	//	fmt.Println("key = ", key)
+
+	//	var valuesMap = value.(map[string]interface{})
+
+	//	var aclass string = valuesMap["aclass"].(string)
+	//	var altname string = valuesMap["altname"].(string)
+	//	var decimals float64 = valuesMap["decimals"].(float64)
+	//	var displayDecimals float64 = valuesMap["display_decimals"].(float64)
+
+	//	fmt.Println("aclass = ", aclass)
+	//	fmt.Println("altname =", altname)
+	//	fmt.Println("decimals =", decimals)
+	//	fmt.Println("display_decimals = ", displayDecimals)
+	//}
+	return outputAsMap, nil
 }
 
 // AssetPairs returns the servers available asset pairs
@@ -402,7 +424,7 @@ func (api *KrakenApi) AddOrder(pair string, direction string, orderType string, 
 }
 
 // Ledgers returns ledgers informations
-func (api *KrakenApi) Ledgers(args map[string]string) (*LedgersResponse, error) {
+func (api *KrakenApi) Ledgers(args map[string]string) (map[string]interface{}, error) {
 	params := url.Values{}
 	if value, ok := args["aclass"]; ok {
 		params.Add("aclass", value)
@@ -422,12 +444,16 @@ func (api *KrakenApi) Ledgers(args map[string]string) (*LedgersResponse, error) 
 	if value, ok := args["ofs"]; ok {
 		params.Add("ofs", value)
 	}
-	resp, err := api.queryPrivate("Ledgers", params, &LedgersResponse{})
+	resp, err := api.queryPrivate("Ledgers", params, nil)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
-	return resp.(*LedgersResponse), nil
+	// return map instead of interface
+	var outputAsMap map[string]interface{} = resp.(map[string]interface{})
+
+	return outputAsMap, nil
 }
 
 // DepositAddresses returns deposit addresses
