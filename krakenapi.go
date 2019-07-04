@@ -424,7 +424,7 @@ func (api *KrakenApi) AddOrder(pair string, direction string, orderType string, 
 }
 
 // Ledgers returns ledgers informations
-func (api *KrakenApi) Ledgers(args map[string]string) (map[string]interface{}, error) {
+func (api *KrakenApi) Ledgers(args map[string]string) (interface{}, error) {
 	params := url.Values{}
 	if value, ok := args["aclass"]; ok {
 		params.Add("aclass", value)
@@ -449,11 +449,8 @@ func (api *KrakenApi) Ledgers(args map[string]string) (map[string]interface{}, e
 		fmt.Println(err)
 		return nil, err
 	}
-
-	// return map instead of interface
-	var outputAsMap map[string]interface{} = resp.(map[string]interface{})
-
-	return outputAsMap, nil
+		
+	return resp, nil
 }
 
 // DepositAddresses returns deposit addresses
